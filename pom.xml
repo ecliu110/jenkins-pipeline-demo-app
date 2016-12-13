@@ -10,14 +10,14 @@
 
   <groupId>com.mainstreethub.demo</groupId>
   <artifactId>parent</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
   <packaging>pom</packaging>
 
   <scm>
     <url>https://github.com/bbeck/dropwizard-demo</url>
     <connection>scm:git:git@github.com:bbeck/dropwizard-demo</connection>
     <developerConnection>scm:git:git@github.com:bbeck/dropwizard-demo</developerConnection>
-    <tag>HEAD</tag>
+    <tag>v0.0.1</tag>
   </scm>
 
   <build>
