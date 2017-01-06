@@ -1,22 +1,18 @@
 node("java:1.8") {
-  def mvn = tool("maven") + "/bin/mvn"
+  def mvn = tool("maven") + "/bin/mvn -B"
 
   checkout scm
 
   stage("Compile") {
-    echo "Directory:"
-    sh "pwd"
-    echo ""
-
-    echo "Directory contents:"
-    sh "ls"
-    echo ""
-
-    sh "${mvn} -B clean compile test-compile"
+    sh "${mvn} clean compile test-compile"
   }
 
   stage("Test") {
-    sh "${mvn} -B verify"
+    sh "${mvn} verify"
+  }
+
+  stage("Package") {
+    sh "${mvn} -Dskip.docker.image.build=false -Dmaven.test.skip=true clean package"
   }
 
   stage("Release") {
