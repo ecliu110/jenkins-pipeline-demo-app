@@ -1,13 +1,22 @@
 node("java:1.8") {
   def mvn = tool("maven") + "/bin/mvn"
 
+  checkout scm
+
   stage("Compile") {
-    echo "Hello from compile..."
-    echo "  mvn: ${mvn}"
+    echo "Directory:"
+    sh "pwd"
+    echo ""
+
+    echo "Directory contents:"
+    sh "ls"
+    echo ""
+
+    sh "${mvn} -B clean compile test-compile"
   }
 
   stage("Test") {
-    echo "Hello from test..."
+    sh "${mvn} -B verify"
   }
 
   stage("Release") {
