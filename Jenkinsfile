@@ -6,9 +6,8 @@ node("java:8") {
   sh "${git} config user.email 'engineering+jenkins2@mainstreethub.com'"
   sh "${git} config user.name 'jenkins'"
 
-  sh "env | sort"
-
-  if (env.CHANGE_AUTHOR.startsWith("jenkins")) {
+  def author = sh([returnStdout: true, script: "git log -1 --pretty=%cn"])
+  if ("jenkins".equals(author)) {
     // Don't process any commits authored by jenkins
     return
   }
