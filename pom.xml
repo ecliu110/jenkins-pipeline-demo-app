@@ -14,9 +14,9 @@
   <packaging>pom</packaging>
 
   <scm>
-    <url>https://github.com/mainstreethub/dropwizard-demo</url>
-    <connection>scm:git:git@github.com:mainstreethub/dropwizard-demo</connection>
-    <developerConnection>scm:git:git@github.com:mainstreethub/dropwizard-demo</developerConnection>
+    <url>https://github.com/mainstreethub/jenkins-pipeline-demo-app</url>
+    <connection>scm:git:https://github.com/mainstreethub/jenkins-pipeline-demo-app</connection>
+    <developerConnection>scm:git:https://github.com/mainstreethub/jenkins-pipeline-demo-app</developerConnection>
     <tag>HEAD</tag>
   </scm>
 
