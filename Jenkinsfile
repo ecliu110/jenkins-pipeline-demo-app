@@ -5,9 +5,10 @@ node("java:8") {
   echo "Environment:"
   sh "env | sort"
 
+  sh "${git} config --global user.email engineering+jenkins2@mainstreethub.com"
+  sh "${git} config --global user.name jenkins"
+  sh "${git} config --global credential.helper cache"
   checkout scm
-  sh "${git} config user.email 'engineering+jenkins2@mainstreethub.com'"
-  sh "${git} config user.name 'jenkins'"
 
   def committer = sh(returnStdout: true, script: "git log -1 --pretty=%cn")
   if ("jenkins".equals(committer)) {
@@ -33,7 +34,7 @@ node("java:8") {
   }
 
   stage("Release") {
-    // We need to be in a non-detatched head state in order to perform a
+    // We need to be in a non-detached head state in order to perform a
     // maven release.
     sh "${git} checkout ${env.BRANCH_NAME}"
 
