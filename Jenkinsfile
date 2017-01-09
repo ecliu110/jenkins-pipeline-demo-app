@@ -5,10 +5,9 @@ node("java:8") {
   echo "Environment:"
   sh "env | sort"
 
-  sh "${git} config --global user.email engineering+jenkins2@mainstreethub.com"
-  sh "${git} config --global user.name jenkins"
-  sh "${git} config --global credential.helper cache"
   checkout scm
+  sh "${git} config user.email engineering+jenkins2@mainstreethub.com"
+  sh "${git} config user.name jenkins"
 
   def committer = sh(returnStdout: true, script: "git log -1 --pretty=%cn")
   if ("jenkins".equals(committer)) {
@@ -38,7 +37,11 @@ node("java:8") {
     // maven release.
     sh "${git} checkout ${env.BRANCH_NAME}"
 
-    sh "${mvn} release:clean release:prepare release:perform"
+    // We need to perform our release using SSH credentials so that we can
+    // push commits and tags back to GitHub.
+    sshagent(credentials: ["github-ssh"]) {
+      sh "${mvn} release:clean release:prepare release:perform"
+    }
   }
 
   stage("Deploy to test") {
