@@ -15,6 +15,11 @@ node("java:1.8") {
     sh "${mvn} -Dskip.docker.image.build=false -Dmaven.test.skip=true clean package"
   }
 
+  if (env.BRANCH_NAME.startsWith("PR-")) {
+    // This is a pull request build, no need to do anything else
+    return
+  }
+
   stage("Release") {
     echo "Hello from release..."
   }
