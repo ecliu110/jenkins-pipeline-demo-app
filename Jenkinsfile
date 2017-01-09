@@ -1,7 +1,15 @@
 node("java:8") {
+  def git = tool("git")
   def mvn = tool("maven") + "/bin/mvn -B"
 
   checkout scm
+  sh "${git} config user.email 'engineering+jenkins2@mainstreethub.com'"
+  sh "${git} config user.name 'jenkins'"
+
+  if (env.CHANGE_AUTHOR.startsWith("jenkins")) {
+    // Don't process any commits authored by jenkins
+    return
+  }
 
   stage("Compile") {
     sh "${mvn} clean compile test-compile"
