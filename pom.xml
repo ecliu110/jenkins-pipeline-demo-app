@@ -14,9 +14,9 @@
   <packaging>pom</packaging>
 
   <scm>
-    <url>https://github.com/bbeck/dropwizard-demo</url>
-    <connection>scm:git:git@github.com:bbeck/dropwizard-demo</connection>
-    <developerConnection>scm:git:git@github.com:bbeck/dropwizard-demo</developerConnection>
+    <url>https://github.com/mainstreethub/dropwizard-demo</url>
+    <connection>scm:git:git@github.com:mainstreethub/dropwizard-demo</connection>
+    <developerConnection>scm:git:git@github.com:mainstreethub/dropwizard-demo</developerConnection>
     <tag>HEAD</tag>
   </scm>
 
