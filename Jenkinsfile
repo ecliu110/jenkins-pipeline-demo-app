@@ -1,4 +1,4 @@
-node("java:1.8") {
+node("java:8") {
   def mvn = tool("maven") + "/bin/mvn -B"
 
   checkout scm
@@ -21,7 +21,7 @@ node("java:1.8") {
   }
 
   stage("Release") {
-    echo "Hello from release..."
+    sh "${mvn} release:clean release:prepare release:perform"
   }
 
   stage("Deploy to test") {
