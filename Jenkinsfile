@@ -37,6 +37,9 @@ node("java:8") {
     // maven release.
     sh "${git} checkout ${env.BRANCH_NAME}"
 
+    // We also need to avoid host key checking for GitHub
+    sh(script: "mkdir ${HOME}/.ssh; echo 'Host github.com' > ${HOME}/.ssh/config; echo '  StrictHostKeyChecking no' >> ${HOME}/.ssh/config")
+
     // We need to perform our release using SSH credentials so that we can
     // push commits and tags back to GitHub.
     sshagent(credentials: ["github-ssh"]) {
