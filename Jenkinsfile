@@ -9,7 +9,9 @@ node("java:8") {
   sh "${git} config user.email engineering+jenkins2@mainstreethub.com"
   sh "${git} config user.name jenkins"
 
-  def committer = sh(returnStdout: true, script: "git log -1 --pretty=%cn")
+  def committer = sh(script: "git log -1 --pretty=%cn", returnStdout: true)
+  echo "committer: ${committer}"
+
   if ("jenkins".equals(committer)) {
     // Don't process any commits created by jenkins
     return
@@ -38,12 +40,13 @@ node("java:8") {
     sh "${git} checkout ${env.BRANCH_NAME}"
 
     // We also need to avoid host key checking for GitHub
+    // TODO: This is ugly as sin.
     sh(script: "mkdir ${HOME}/.ssh; echo 'Host github.com' > ${HOME}/.ssh/config; echo '  StrictHostKeyChecking no' >> ${HOME}/.ssh/config")
 
     // We need to perform our release using SSH credentials so that we can
     // push commits and tags back to GitHub.
     sshagent(credentials: ["github-ssh"]) {
-      sh "${mvn} release:clean release:prepare release:perform"
+      sh "${mvn} -Pdocker release:clean release:prepare release:perform"
     }
   }
 
