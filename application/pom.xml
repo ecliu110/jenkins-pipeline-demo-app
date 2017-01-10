@@ -13,7 +13,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <docker.artifactId>dropwizard-demo</docker.artifactId>
+    <docker.artifactId>jenkins-pipeline-demo-app</docker.artifactId>
   </properties>
 
   <build>
