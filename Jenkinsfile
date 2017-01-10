@@ -9,7 +9,7 @@ node("java:8") {
   sh "${git} config user.email engineering+jenkins2@mainstreethub.com"
   sh "${git} config user.name jenkins"
 
-  def committer = sh(script: "git log -1 --pretty=%cn", returnStdout: true)
+  def committer = sh(script: "git log -1 --pretty=%cn", returnStdout: true).trim()
   echo "committer: ${committer}"
 
   if ("jenkins".equals(committer)) {
