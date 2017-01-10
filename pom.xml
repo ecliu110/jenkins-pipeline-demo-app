@@ -8,7 +8,7 @@
     <version>1.0.2-4</version>
   </parent>
 
-  <groupId>com.mainstreethub.demo</groupId>
+  <groupId>com.mainstreethub.jenkinsdemo</groupId>
   <artifactId>parent</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
