@@ -3,8 +3,23 @@ node("java:8") {
   def mvn = tool("maven") + "/bin/mvn -B"
 
   checkout scm
+  echo "scm: ${scm}"
+
   sh "${git} config user.email engineering+jenkins2@mainstreethub.com"
   sh "${git} config user.name jenkins"
+  withCredentials([[$class: "UsernamePasswordMultiBinding",
+                    credentialsId: "github-http",
+                    usernameVariable: "GIT_USERNAME",
+                    passwordVariable: "GIT_PASSWORD"]]) {
+    sh "env | sort; echo; echo"
+
+    def username = URLEncoder.encode("${env.GIT_USERNAME}", "UTF-8")
+    def password = URLEncoder.encode("${env.GIT_PASSWORD}", "UTF-8")
+
+    writeFile(file: "${env.HOME}/.git-credentials",
+              text: "https://${username}:${password}@github.com")
+    sh "${git} config credential.helper store --file=${env.HOME}/.git-credentials"
+  }
 
   def committer = sh(script: "${git} log -1 --pretty=%cn", returnStdout: true).trim()
   if ("jenkins".equals(committer)) {
@@ -31,16 +46,6 @@ node("java:8") {
 
   def newVersion = sh(script: "./get-release-version.sh", returnStdout: true).trim()
   stage("Release") {
-    // We need to be in a non-detached head state in order to perform a
-    // maven release.
-    sh "${git} checkout ${env.BRANCH_NAME}"
-
-    // We need to avoid host key checking for GitHub so that we can push
-    // commits without being prompted.
-    sh "mkdir ${HOME}/.ssh"
-    sh "echo 'Host github.com'             > ${HOME}/.ssh/config"
-    sh "echo '  StrictHostKeyChecking no' >> ${HOME}/.ssh/config"
-
     // Tell maven what version we're going to use.
     sh "${mvn} versions:set -DnewVersion=${newVersion} versions:commit"
 
@@ -50,9 +55,8 @@ node("java:8") {
     // Tag this revision and push the tag to GitHub.
     sh "${git} tag v${newVersion}"
 
-    sshagent(credentials: ["github-ssh"]) {
-      sh "${git} push origin v${newVersion}"
-    }
+    input "Create tag?"
+    sh "${git} push origin v${newVersion}"
   }
 
   stage("Deploy to test") {
