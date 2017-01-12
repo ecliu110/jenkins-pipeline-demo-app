@@ -41,21 +41,28 @@ node("java:8") {
     sh "echo 'Host github.com'             > ${HOME}/.ssh/config"
     sh "echo '  StrictHostKeyChecking no' >> ${HOME}/.ssh/config"
 
-    // Tell maven what version we're going to use
+    // Tell maven what version we're going to use.
     sh "${mvn} versions:set -DnewVersion=${newVersion} versions:commit"
 
-    // Ask maven to deploy artifacts for this version
+    // Ask maven to deploy artifacts for this version.
     sh "${mvn} -Pdocker deploy"
+
+    // Tag this revision and push the tag to GitHub.
+    sh "${git} tag v${newVersion}"
+
+    sshagent(credentials: ["github-ssh"]) {
+      sh "${git} push origin v${newVersion}"
+    }
   }
 
   stage("Deploy to test") {
-    milestone
+    milestone()
 
     echo "Hello from deploy to test..."
   }
 
   stage("Deploy to prod") {
-    milestone
+    milestone()
 
     echo "Hello from deploy to prod..."
   }
