@@ -18,14 +18,6 @@ node("java:8") {
     sh "${git} config credential.helper store --file=${env.HOME}/.git-credentials"
   }
 
-  /*
-  // TODO: Probably not necessary anymore since we're not doing a maven release
-  def committer = sh(script: "${git} log -1 --pretty=%cn", returnStdout: true).trim()
-  if ("jenkins".equals(committer)) {
-    // Don't process any commits created by jenkins.
-    return
-  }
-
   stage("Compile") {
     sh "${mvn} clean compile test-compile"
   }
@@ -57,48 +49,47 @@ node("java:8") {
     sh "${git} tag v${newVersion}"
     sh "${git} push origin v${newVersion}"
   }
-  */
 
   def application = "jenkins-pipeline-demo-app"
-  def newVersion = "0.0.2"
   stage("Deploy to test") {
     milestone()
 
-    slackSend(
-      channel: "script-test",
-      message: "Starting deploy of ${application}:${newVersion} to TEST",
-      tokenCredentialId: "slack-integration-token"
-    )
+    notify("Starting deploy of ${application}:${newVersion} to TEST", true)
 
-    // Checkout the ops repo so that we can execute the run-stack script
-    checkout(
-      $class: "GitSCM",
-      branches: [[name: "*/master"]],
-      extensions: [
-        [$class: "RelativeTargetDirectory", relativeTargetDir: "ops"]
-      ],
-      userRemoteConfigs: [
-        [credentialsId: "github-http", url: "https://github.com/mainstreethub/ops"]
-      ]
-    )
+    try {
+      // Checkout the ops repo so that we can execute the run-stack script
+      checkout(
+          $class: "GitSCM",
+          branches: [[name: "*/master"]],
+          extensions: [
+              [$class: "RelativeTargetDirectory", relativeTargetDir: "ops"]
+          ],
+          userRemoteConfigs: [
+              [credentialsId: "github-http", url: "https://github.com/mainstreethub/ops"]
+          ]
+      )
 
-    dir("ops") {
-      sh """
-        pip install -U pip wheel
-        pip install -r requirements.txt
+      dir("ops") {
+        sh """
+          pip install -U pip wheel
+          pip install -r requirements.txt
+  
+          echo "starting stack update"
+          bin/run-stack.py stacks/dropwizard-service.py \
+            --application "${application}"              \
+            --environment test                          \
+            --version ${newVersion}                     \
+            --external                                  \
+            --instance-count 1
+          echo "finished stack update: \$?"
+        """
+      }
 
-        echo "starting stack update"
-        bin/run-stack.py stacks/dropwizard-service.py \
-          --application "${application}"              \
-          --environment test                          \
-          --version ${newVersion}                     \
-          --external                                  \
-          --instance-count 1
-        echo "finished stack update: \$?"
-      """
+      notify("Completed deploy of ${application}:${newVersion} to TEST", true)
+    } catch(e) {
+      notify("Failed deploy of ${application}:${newVersion} to TEST", false)
+      throw e
     }
-
-    input "Finish deploy?"
   }
 
   stage("Deploy to prod") {
@@ -106,4 +97,13 @@ node("java:8") {
 
     echo "Hello from deploy to prod..."
   }
+}
+
+def notify(String message, boolean success) {
+  slackSend(
+      channel: "script-test",
+      color: success ? "good" : "danger",
+      message: "${message} - ${env.BUILD_URL}",
+      tokenCredentialId: "slack-integration-token"
+  )
 }
