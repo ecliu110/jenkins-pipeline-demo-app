@@ -1,7 +1,3 @@
-@Library('Dropwizard')
-import mainstreethub.pipelines.Dropwizard
-def dUtility = new Dropwizard(steps)
-
 node("java:8") {
   def git = tool("git")
   def mvn = tool("maven") + "/bin/mvn -B"
@@ -23,6 +19,8 @@ node("java:8") {
   }
 
   stage("Compile") {
+    def dUtility = new mainstreethub.pipelines.Dropwizard()
+
     println "About to notify slack"
     dUtility.notifySlack()
     sh "${mvn} clean compile test-compile"
@@ -60,7 +58,7 @@ node("java:8") {
   stage("Deploy to test") {
     milestone()
 
-//    notify("Starting deploy of ${application}:${newVersion} to TEST", true)
+    notify("Starting deploy of ${application}:${newVersion} to TEST", true)
 
     try {
       // Checkout the ops repo so that we can execute the run-stack script
