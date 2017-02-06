@@ -19,6 +19,8 @@ node("java:8") {
   }
 
   stage("Compile") {
+    println "About to notify slack"
+    notifySlack();
     sh "${mvn} clean compile test-compile"
   }
 
@@ -54,7 +56,7 @@ node("java:8") {
   stage("Deploy to test") {
     milestone()
 
-    notify("Starting deploy of ${application}:${newVersion} to TEST", true)
+//    notify("Starting deploy of ${application}:${newVersion} to TEST", true)
 
     try {
       // Checkout the ops repo so that we can execute the run-stack script
@@ -73,7 +75,7 @@ node("java:8") {
         sh """
           pip install -U pip wheel
           pip install -r requirements.txt
-  
+
           echo "starting stack update"
           bin/run-stack.py stacks/dropwizard-service.py \
             --application "${application}"              \
@@ -85,9 +87,9 @@ node("java:8") {
         """
       }
 
-      notify("Completed deploy of ${application}:${newVersion} to TEST", true)
+//      notify("Completed deploy of ${application}:${newVersion} to TEST", true)
     } catch(e) {
-      notify("Failed deploy of ${application}:${newVersion} to TEST", false)
+//      notify("Failed deploy of ${application}:${newVersion} to TEST", false)
       throw e
     }
   }
@@ -99,11 +101,9 @@ node("java:8") {
   }
 }
 
-def notify(String message, boolean success) {
-  slackSend(
-      channel: "script-test",
-      color: success ? "good" : "danger",
-      message: "${message} - ${env.BUILD_URL}",
-      tokenCredentialId: "slack-integration-token"
-  )
+@Library('Dropwizard')
+import mainstreethub.pipelines.Dropwizard
+def notifySlack() {
+  def dUtility = new Dropwizard(steps)
+  dUtility.notifySlack()
 }
