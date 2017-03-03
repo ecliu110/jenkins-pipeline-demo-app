@@ -1,7 +1,9 @@
-def dUtility = new mainstreethub.pipelines.Dropwizard(steps)
+def dropwizard = new mainstreethub.pipelines.Dropwizard()
 
-node("java:8") {
-  println "About to compile"
-  checkout scm
-  dUtility.doStuff(env)
-}
+dropwizard.pipeline(
+  ecs: new mainstreethub.vars.Ecs(
+      externalAlb: true,
+      instanceCount: 2
+  ),
+    application: "jenkins-pipeline-demo-app"
+)
