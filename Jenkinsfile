@@ -9,11 +9,10 @@
 //)
 
 import com.mainstreethub.jenkins.pipelines.dropwizard.*
-import com.mainstreethub.jenkins.pipelines.Strategy
 
 
-new Pipeline().dropwizardBuildTestReleaseDeploy(application: "jenkins-pipeline-demo-app",
-deployStrategy: new DeployStrategy([
+new Pipeline().run(application: "jenkins-pipeline-demo-app",
+deployStrategy: new EcsDeployStrategy([
     steps: steps,
     externalAlb: true,
     stack: "dropwizard-singleton-service.py",
