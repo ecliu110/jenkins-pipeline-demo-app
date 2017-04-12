@@ -17,11 +17,8 @@ deployStrategy: new EcsDeployStrategy([
     externalAlb: true,
     stack: "dropwizard-singleton-service.py",
     instanceCount: 1,
-    testContainerVars: [
+    env: [
         "testtest=testtest"
-    ],
-    prodContainerVars: [
-        "prodprod=prodprod"
     ]
 ])
 )
