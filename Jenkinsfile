@@ -16,8 +16,15 @@ deployStrategy: new EcsDeployStrategy([
     steps: steps,
     externalAlb: true,
     stack: "dropwizard-singleton-service.py",
-    instanceCount: 1]
-))
+    instanceCount: 1,
+    testContainerVars: [
+        "testtest=testtest"
+    ],
+    prodContainerVars: [
+        "prodprod=prodprod"
+    ]
+])
+)
 
 //new Pipeline().dropwizardBuildTestReleaseDeploy(application: "jenkins-pipeline-demo-app",
 //    deployStrategy: new DeployStrategySpecial(steps)
