@@ -16,7 +16,21 @@ deployStrategy: new EcsDeployStrategy([
     steps: steps,
     externalAlb: true,
     stack: "dropwizard-singleton-service.py",
-    instanceCount: 1
+    instanceCount: 1,
+    testContainerEnvs: [
+        "RDS_HOST=deepwheel-mysql.test",
+        "RDS_PORT=3306",
+        "RDS_DATABASE=mainstreethub",
+        "RDS_USERNAME=root",
+        "RDS_PASSWORD=k33pwh33l"
+    ],
+    prodContainerEnvs: [
+        "RDS_HOST=deepwheel-mysql.prod",
+        "RDS_PORT=3306",
+        "RDS_DATABASE=mainstreethub",
+        "RDS_USERNAME=root",
+        "RDS_PASSWORD=k33pwh33l"
+    ]
 ])
 )
 
