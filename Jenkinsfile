@@ -7,9 +7,7 @@
 //  ),
 //    application: "jenkins-pipeline-demo-app"
 //)
-
 import com.mainstreethub.jenkins.pipelines.java.dropwizard.*
-
 
 new Pipeline().run(application: "jenkins-pipeline-demo-app",
 deployStrategy: new EcsDeployStrategy([
