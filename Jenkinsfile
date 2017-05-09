@@ -7,7 +7,8 @@
 //  ),
 //    application: "jenkins-pipeline-demo-app"
 //)
-import com.mainstreethub.jenkins.pipelines.java.dropwizard.*
+@Library("WIP")
+import com.mainstreethub.jenkins.pipelines.java.test.dropwizard.*
 
 new Pipeline().run(application: "jenkins-pipeline-demo-app",
 deployStrategy: new EcsDeployStrategy([
@@ -15,19 +16,8 @@ deployStrategy: new EcsDeployStrategy([
     externalAlb: true,
     stack: "dropwizard-singleton-service.py",
     instanceCount: 1,
-    testContainerEnvs: [
-        "RDS_HOST=deepwheel-mysql.test",
-        "RDS_PORT=3306",
-        "RDS_DATABASE=mainstreethub",
-        "RDS_USERNAME=root",
-        "RDS_PASSWORD=k33pwh33l"
-    ],
-    prodContainerEnvs: [
-        "RDS_HOST=deepwheel-mysql.prod",
-        "RDS_PORT=3306",
-        "RDS_DATABASE=mainstreethub",
-        "RDS_USERNAME=root",
-        "RDS_PASSWORD=k33pwh33l"
+    env: [
+        "bar=foo",
     ]
 ])
 )
