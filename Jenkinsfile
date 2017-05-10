@@ -8,9 +8,9 @@
 //    application: "jenkins-pipeline-demo-app"
 //)
 @Library("WIP")
-import com.mainstreethub.jenkins.pipelines.java.test.dropwizard.*
+import com.mainstreethub.jenkins.pipelines.java.dropwizard.*
 
-new com.mainstreethub.jenkins.pipelines.java.test.dropwizard.Pipeline2().run(application: "jenkins-pipeline-demo-app",
+new com.mainstreethub.jenkins.pipelines.java.dropwizard.Pipeline2().run(application: "jenkins-pipeline-demo-app",
 deployStrategy: new EcsDeployStrategy([
     steps: steps,
     externalAlb: true,
