@@ -10,16 +10,18 @@
 @Library("WIP")
 import com.mainstreethub.jenkins.pipelines.java.dropwizard.*
 
-new com.mainstreethub.jenkins.pipelines.java.dropwizard.Pipeline2().run(application: "jenkins-pipeline-demo-app",
-deployStrategy: new EcsDeployStrategy([
-    steps: steps,
-    externalAlb: true,
-    stack: "dropwizard-singleton-service.py",
-    instanceCount: 1,
-    env: [
-        "bar=foo",
-    ]
-])
+new com.mainstreethub.jenkins.pipelines.java.dropwizard.Pipeline2().run(
+    application: "jenkins-pipeline-demo-app",
+//    jenkinsContainerLabel: "build",
+    deployStrategy: new EcsDeployStrategy([
+        steps: steps,
+        externalAlb: true,
+        stack: "dropwizard-singleton-service.py",
+        instanceCount: 1,
+        env: [
+            "bar=foo",
+        ]
+    ])
 )
 
 //new Pipeline().dropwizardBuildTestReleaseDeploy(application: "jenkins-pipeline-demo-app",
