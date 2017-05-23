@@ -13,10 +13,12 @@ import com.mainstreethub.jenkins.pipelines.java.dropwizard.*
 new com.mainstreethub.jenkins.pipelines.java.dropwizard.Pipeline2().run(
     application: "jenkins-pipeline-demo-app",
 //    jenkinsContainerLabel: "build",
-    deployStrategy: new EcsDeployStrategy([
+    deployStrategy: new EcsDeployStrategy2([
         steps: steps,
         externalAlb: true,
-        stack: "dropwizard-singleton-service.py",
+        testInstanceCount: 1,
+        prodInstanceCount: 2,
+//        stack: "dropwizard-singleton-service.py",
         instanceCount: 1,
         env: [
             "bar=foo",
