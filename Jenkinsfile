@@ -6,10 +6,7 @@ def notifier = new Notifier([
     ownerChannels: ["script-test"]
 ])
 
-new Pipeline(this).run(
+new Pipeline2(this).run(
     application: "jenkins-pipeline-demo-app",
-    notifier: notifier,
-    buildStrategy: {
-        mvn clean test
-    }
+    notifier: notifier
 )
